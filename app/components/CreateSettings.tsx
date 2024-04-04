@@ -1,7 +1,7 @@
 import { SafeAreaView, ScrollView, View, Text, StyleSheet} from 'react-native';
 import React, { useLayoutEffect, useState} from 'react';
 import { themes, sizes } from '../constants/layout';
-import { useSettingsContext } from '../context/settingsContext';
+import { useSettingsContext } from '../context/SettingsContext';
 import {Button, InputField, Spacer } from '.';
 import { useNavigation } from '@react-navigation/native';
 import { QuotePostSettings, QuotePostSettingsKey, NotifyConfigKey, ImageSettings, ImageSettingsKey } from '../constants/types';
@@ -158,7 +158,7 @@ const handleErrors = () => {
                     placeholder={key === 'telegramChannelId'? 'Enter new telegramChannelId' : 'Enter new discordWebhookUrl'}
                     color={ darkTheme? themes.dark.text: themes.light.text}
                     multiline = {true}
-                    borderWidth={1}
+                    borderBottomWidth={1}
                     textAlignVertical='center'
                     borderColor={darkTheme? themes.dark.border:themes.light.border}
                     />
@@ -179,7 +179,7 @@ const handleErrors = () => {
                     placeholder={'Enter value'}
                     color={ darkTheme? themes.dark.text: themes.light.text}
                     multiline = {true}
-                    borderWidth={1}
+                    borderBottomWidth={1}
                     borderColor={darkTheme? themes.dark.border:themes.light.border}
                     errorText={quotePostErrors[key as QuotePostSettingsKey]}
                     error={!!(!newQuotePostSettings[key as QuotePostSettingsKey]!.toString() && quotePostErrors[key as QuotePostSettingsKey])}
@@ -208,7 +208,7 @@ const handleErrors = () => {
                     multiline={settingsKey === 'negative_prompt'}
                     color={darkTheme ? themes.dark.text : themes.light.text}
                     label={settingsKey}
-                    borderWidth={1}
+                    borderBottomWidth={1}
                     borderColor={darkTheme? themes.dark.border:themes.light.border}
                     textAlignVertical='center'
                     />

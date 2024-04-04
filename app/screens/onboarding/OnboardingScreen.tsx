@@ -3,7 +3,7 @@ import { StyleSheet, View, SafeAreaView, Dimensions, StatusBar, Image, Text} fro
 import React, {useLayoutEffect, useState} from 'react'
 import { themes, sizes } from '../../constants/layout'
 import {Button } from '../../components';
-import { useSettingsContext } from '../../context/settingsContext';
+import { useSettingsContext } from '../../context/SettingsContext';
 import { AnimatedImage } from '../../components';
 import { setTabLayout } from '../../lib/layout';
 

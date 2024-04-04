@@ -10,4 +10,5 @@ export const PLACEHOLDER_NOTES = Array.from({length: 50}, (_, index: number): No
         lastModified: Date.now(),
         type:'text'
     }
-  ))
+  ));
+

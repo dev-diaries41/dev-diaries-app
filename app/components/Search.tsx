@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import {View, TextInput,TouchableOpacity,StyleSheet,BackHandler,} from 'react-native';
-import { useSearchContext } from '../context/searchContext';
+import { useSearchContext } from '../context/SearchContext';
 import { Ionicons } from '@expo/vector-icons';
 import { themes, sizes } from '../constants/layout';
 import debounce from 'debounce';

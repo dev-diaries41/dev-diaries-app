@@ -2,11 +2,11 @@ import { StyleSheet, View, SafeAreaView, Dimensions, Image, StatusBar, BackHandl
 import React, {useEffect, useState} from 'react'
 import { themes, sizes } from '../../constants/layout'
 import {FooterButtons } from '../../components';
-import { useImageGenContext } from '../../context/imageContext';
+import { useImageGenContext } from '../../context/ImageContext';
 import { downloadFromUrl, save, shareFromUrl } from '../../lib/storage';
-import { generate } from '../../lib/generate';
-import { useSettingsContext } from '../../context/settingsContext';
-import { useLayoutContext } from '../../context/layoutContext';
+import { generateImage } from '../../lib/create';
+import { useSettingsContext } from '../../context/SettingsContext';
+import { useTabLayout } from '../../context/TabLayoutContext';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -14,17 +14,16 @@ const {height, width} = Dimensions.get('screen');
 const ViewMedia = ({navigation, route}: any) => {
     const {assets, setAssets} = useImageGenContext();
     const {theme, imageSettings} = useSettingsContext()
-    const {shouldHideTabBar, setShouldHideTabBar} = useLayoutContext();
+    const {shouldHideTabBar, setShouldHideTabBar} = useTabLayout();
     const darkTheme = theme === 'dark'
     const {url, prompt} = route.params;
     const [loading, setLoading] = useState(false);
-    console.log({url})
 
       // Back button shows tab bar again
       useEffect(() => {
         const backAction = () => {
-        if (shouldHideTabBar && url) {
-            handleGoBack();
+        if (shouldHideTabBar) {
+            handleRemoveImage();
             return true;
         }
 
@@ -42,7 +41,8 @@ const ViewMedia = ({navigation, route}: any) => {
     }
 
     const handleGoBack = () => {
-        // this is the case where going back is to the create screen in which case tab needs to be shown
+        // this is the case where going back is to the create screen 
+        // in which case tab needs to be shown
         if(url){
             setShouldHideTabBar(false);
         }
@@ -54,7 +54,7 @@ const ViewMedia = ({navigation, route}: any) => {
         setLoading(true); 
 
         try {
-            const { data } = await generate(prompt, imageSettings);
+            const { data } = await generateImage(prompt, imageSettings);
             if (data && data.status === 'COMPLETED') {
                 setAssets([data.output.image_url]);
             } else {

@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Animated } from 'react-native';
 import { themes, sizes } from '../constants/layout';
-import { useSettingsContext } from '../context/settingsContext';
+import { useSettingsContext } from '../context/SettingsContext';
 import { NoteCardProps } from '../constants/types';
 import { useNavigation } from '@react-navigation/native';
-import { useNotesContext } from '../context/noteContext';
+import { useNotesContext } from '../context/NoteContext';
 import { formatTimeElapsed } from '../lib/create';
 import IconButton from './IconButton';
 import { Ionicons } from '@expo/vector-icons';

@@ -1,15 +1,16 @@
 import React, { useState, useLayoutEffect, useEffect } from 'react';
 import { View, SafeAreaView, StyleSheet, Keyboard } from 'react-native';
-import { useNotesContext } from '../../context/noteContext';
-import { useSettingsContext } from '../../context/settingsContext';
+import { useNotesContext } from '../../context/NoteContext';
+import { useSettingsContext } from '../../context/SettingsContext';
 import { themes, sizes } from '../../constants/layout';
 import { createFlashMsg, EmptyScreen, IconButton, DisplayModal, NotesModal, ListNotes } from '../../components';
 import { Note, Tag } from '../../constants/types';
 import { setTabLayout } from '../../lib/layout';
 import { fetchNotesInBatch, deleteNote, saveTags } from '../../lib/storage';
 import TerminalPath from '../../components/TerminalPath';
-import { useSearchContext } from '../../context/searchContext';
+import { useSearchContext } from '../../context/SearchContext';
 import Search from '../../components/Search';
+import { useHideKeyboard } from '../../hooks/useHideKeyboard';
 
 
 //Constants
@@ -21,7 +22,7 @@ const MyNotesScreen = ({navigation}: any) => {
   const [loadedAllNotes, setLoadedAllNotes] = useState(false);
   const [selectedNote, setSelectedNote] = useState<Note|null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  const {isKeyboardVisible} = useHideKeyboard();
   const [selectingTag, setSelectingTag] = useState(false);
   const {theme} = useSettingsContext();
   const {showMessage, FlashMessage} = createFlashMsg();
@@ -64,21 +65,6 @@ const MyNotesScreen = ({navigation}: any) => {
     }
 
  }, [theme, tagFilter, isSearching])
-
- useEffect(() => {
-  const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
-    setKeyboardVisible(true);
-  });
-  const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-    setKeyboardVisible(false);
-  });
-
-  // Cleanup listeners
-  return () => {
-    keyboardDidShowListener.remove();
-    keyboardDidHideListener.remove();
-  };
-}, []);
 
 
   const toggleSelectTag = () => setSelectingTag(true)
@@ -149,6 +135,7 @@ const MyNotesScreen = ({navigation}: any) => {
     setTags(updatedTags);
     await saveTags(updatedTags);
   }
+
       
   if(myNotes.length === 0){
     return (
@@ -164,8 +151,7 @@ const MyNotesScreen = ({navigation}: any) => {
     paddingBottom: isKeyboardVisible? 0: 60
   }
     ]}>  
-    {/* Before adding React.memo analyse performance metrics to see the difference if any*/}
-    <View style={[styles.notesContainer, { opacity: selectingTag ? 0.3 : 1 }]}> 
+    <View style={[styles.notesContainer, { opacity: selectingTag || isEditing ? 0.3 : 1 }]}> 
     <ListNotes
       handleEditNote={handleEditNote}
       handleLoadMore={handleLoadMore}

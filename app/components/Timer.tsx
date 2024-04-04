@@ -40,8 +40,8 @@ const Timer  = ({ duration, onFinished, message = 'Remaining Time' }: TimerProps
 // Clear the persisted timeout when timeout ends
   const endTimer = async () => {
     await AsyncStorage.removeItem('timeout'); 
-    setRemainingTime(0)
-    onFinished()
+    setRemainingTime(0);
+    onFinished();
   }
 
   const minutes = Math.floor(remainingTime / 60000);

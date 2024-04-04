@@ -1,6 +1,6 @@
 import React, { useState, useLayoutEffect, useEffect } from 'react';
 import {View, StyleSheet, StatusBar, } from 'react-native';
-import {useSettingsContext } from '../context/settingsContext';
+import {useSettingsContext } from '../context/SettingsContext';
 import {themes, sizes } from '../constants/layout';
 import {createFlashMsg, DatePicker } from '../components';
 

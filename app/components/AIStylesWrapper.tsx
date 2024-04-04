@@ -2,7 +2,7 @@ import { StyleSheet, FlatList } from 'react-native'
 import React from 'react'
 import { sizes, themes } from '../constants/layout'
 import { Button } from './Buttons'
-import { useSettingsContext } from '../context/settingsContext'
+import { useSettingsContext } from '../context/SettingsContext'
 
 const data = [
   { key: 'photorealistic', text: 'Photorealistic' },

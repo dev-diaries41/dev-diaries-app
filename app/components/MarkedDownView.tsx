@@ -1,8 +1,8 @@
 import React from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import Markdown from 'react-native-markdown-display';
-import { sizes, themes } from '../constants/layout';
-import { useNotesContext } from '../context/noteContext';
+import { TAB_HEIGHT, sizes, themes } from '../constants/layout';
+import { useNotesContext } from '../context/NoteContext';
 import IconButton from './IconButton';
 
 interface MarkedDownViewProps {
@@ -24,7 +24,7 @@ const MarkedDownView = ({
     const {setViewMode} = useNotesContext()
   return (
     <>
-      <SafeAreaView>
+      <SafeAreaView style={styles.container}>
         <ScrollView
           contentInsetAdjustmentBehavior="automatic"
           style={styles.mdView}
@@ -45,13 +45,13 @@ const MarkedDownView = ({
           </Markdown>
         </ScrollView>
         <View style={[styles.viewModeButtonContainer, {
-            backgroundColor: darkTheme? themes.dark.primary : themes.light.primary,
+            backgroundColor: darkTheme? themes.dark.background : themes.light.background,
             borderColor: darkTheme? themes.dark.primary : themes.light.primary,
 
             }]}>
           <IconButton
             onPress={()=>setViewMode(false)}
-            color={darkTheme? themes.dark.icon : themes.light.icon}
+            color={darkTheme? themes.dark.primary : themes.light.primary}
             icon={'pencil'}
             size={30}
           />
@@ -65,15 +65,15 @@ const MarkedDownView = ({
 const styles = StyleSheet.create({
     container: { 
       flex: 1,
-      padding: sizes.layout.small,
-      position:'relative',
+      paddingBottom: TAB_HEIGHT,
     },
     viewModeButtonContainer:{
       position:'absolute',
-      bottom:60,
+      bottom:90,
       right: 16,
       alignItems:'center',
       justifyContent:'center',
+      marginBottom:sizes.layout.medium,
       borderRadius:30,
       borderWidth:2,
       height:60,

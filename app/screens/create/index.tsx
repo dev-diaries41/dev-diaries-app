@@ -6,9 +6,9 @@ import CreateScreen from './CreateScreen';
 import CreateImageScreen from './CreateImageScreen';
 import ViewMedia from './ViewMedia';
 import { IconButton, TerminalPath } from '../../components';
-import { useSettingsContext } from '../../context/settingsContext';
+import { useSettingsContext } from '../../context/SettingsContext';
 import { hideTabBar, setTabLayout } from '../../lib/layout';
-import { useLayoutContext } from '../../context/layoutContext';
+import { useTabLayout } from '../../context/TabLayoutContext';
 
 
 
@@ -16,7 +16,7 @@ const CreateStack = createStackNavigator()
 
 const CreateScreens = ({navigation, route}: any) => {
     const {theme} = useSettingsContext();
-    const {shouldHideTabBar} = useLayoutContext(navigation);
+    const {shouldHideTabBar} = useTabLayout(navigation);
     const darkTheme = theme === 'dark';
 
    // Hnadle UI changes when the component mounts

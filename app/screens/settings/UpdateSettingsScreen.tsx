@@ -1,7 +1,7 @@
 import { SafeAreaView, StyleSheet, ScrollView } from 'react-native';
 import React from 'react';
 import { themes, sizes } from '../../constants/layout';
-import { useSettingsContext } from '../../context/settingsContext';
+import { useSettingsContext } from '../../context/SettingsContext';
 import CreateSettings from '../../components/CreateSettings';
 
 const UpdateSettingsScreen = ({ route, navigation }: any) => {

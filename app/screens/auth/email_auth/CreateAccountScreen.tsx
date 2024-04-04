@@ -2,7 +2,7 @@ import {StyleSheet, SafeAreaView, Text, View, ScrollView, AppState } from 'react
 import React, { useState} from 'react'
 import { Button, Spacer, InputField } from '../../../components';
 import { themes, sizes } from '../../../constants/layout';
-import { useSettingsContext } from '../../../context/settingsContext';
+import { useSettingsContext } from '../../../context/SettingsContext';
 import { signUpWithEmail } from '../../../lib/supabase/auth_sb';
 
 const CreateAccountScreen = ({route, navigation}: any) => {

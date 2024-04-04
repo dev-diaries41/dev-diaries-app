@@ -1,42 +1,44 @@
 import React, { useState, useLayoutEffect, useEffect, useMemo } from 'react';
-import {View, SafeAreaView, StyleSheet, StatusBar, Keyboard, ScrollView, Text, Alert} from 'react-native';
-import {useSettingsContext } from '../../context/settingsContext';
-import {themes, sizes } from '../../constants/layout';
-import {InputField, DisplayModal, DialogueAlert, Button, IconButton, MarkedDownView, createFlashMsg } from '../../components';
+import {View, SafeAreaView, StyleSheet, StatusBar, ScrollView, Text, Alert} from 'react-native';
+import {useSettingsContext } from '../../context/SettingsContext';
+import {themes, sizes, TAB_HEIGHT } from '../../constants/layout';
+import {InputField, DisplayModal, DialogueAlert, Button, IconButton, MarkedDownView, createFlashMsg, BroadcastModal } from '../../components';
 import {downloadBase64Image, saveNote, saveTags } from '../../lib/storage';
 import {hideTabBar, setTabLayout } from '../../lib/layout';
-import {CreateType, Tag } from '../../constants/types';
-import { getButtonColor, getButtonIcon, getButtonText, isMaxCharacters, post, quotePost } from '../../lib/create';
-import { useNotesContext } from '../../context/noteContext';
+import {CreateType, NotifyConfig, Tag } from '../../constants/types';
+import { getButtonColor, getButtonIcon, getButtonText, isMaxCharacters, notify, quotePost } from '../../lib/create';
+import { useNotesContext } from '../../context/NoteContext';
 import * as Crypto from 'expo-crypto'
 import { TextInput } from 'react-native-gesture-handler';
 import TerminalPath from '../../components/TerminalPath';
 import CreateModal from '../../components/CreateModal';
 import debounce from 'debounce';
-import { useLayoutContext } from '../../context/layoutContext';
+import { useTabLayout } from '../../context/TabLayoutContext';
+import { useHideKeyboard } from '../../hooks/useHideKeyboard';
 
-const CreateScreen = ({navigation, route}: any) => {
+const CreateScreen = ({navigation}: any) => {
   const {theme, quotePostSettings, broadcastSettings} = useSettingsContext();
   const {viewMode, setViewMode, selectedTag, setSelectedTag, addingTag, setAddingTag, tags, setTags, myNotes, setMyNotes, currentOpenedNote, setCurrentOpenedNote} = useNotesContext();
-  const {setShouldHideTabBar} = useLayoutContext();
-  const [noteContent, setNoteContent] = useState('');
+  const {setShouldHideTabBar} = useTabLayout();
+  const {isKeyboardVisible} = useHideKeyboard();
+
   const [title, setTitle] = useState('');
+  const [noteContent, setNoteContent] = useState('');
+  const [type, setType] = useState<CreateType>('text');
   const [noteError, setNoteError] = useState('')
+  const [selectingTag, setSelectingTag] = useState(false);
+  const [initiateBroadcast, setInitiateBroadcast] = useState(false)
+  const [viewCreateOptions, setViewCreateOptions] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
-  const [type, setType] = useState<CreateType>('text')
-  const [selectingTag, setSelectingTag] = useState(false)
-  const [viewCreateOptions, setViewCreateOptions] = useState(false)
 
   const darkTheme = theme === 'dark';
   const maxChars = isMaxCharacters(type, noteContent)
-  const autoSave = (!!title || !!noteContent) && (currentOpenedNote?.content !== noteContent || currentOpenedNote?.title !== title)
+  const autoSave = (!!title || !!noteContent) && (currentOpenedNote?.content !== noteContent || currentOpenedNote?.title !== title);
  
   const memoizedButtonText = useMemo(() => getButtonText(type), [type]);
   const memoizedButtonColor = useMemo(() => getButtonColor(type), [type]);
   const memoizedButtonIcon = useMemo(() => getButtonIcon(type), [type]);
   const {showMessage, FlashMessage} = createFlashMsg();
-
 
   // Hnadle UI changes when the component mounts
   useLayoutEffect(() => {
@@ -67,7 +69,7 @@ const CreateScreen = ({navigation, route}: any) => {
  }, [theme, selectedTag, viewMode])
 
   // Handle opened notes
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     if(currentOpenedNote){
       setNoteContent(currentOpenedNote.content)
       setTitle(currentOpenedNote.title)
@@ -76,9 +78,8 @@ const CreateScreen = ({navigation, route}: any) => {
   }, [currentOpenedNote]);
  
 // Close note on screen exit
-  React.useEffect(() => {
+  useEffect(() => {
     const unsubscribe = navigation.addListener('blur', () => {
-        // Cleanly close current opened note
       const closeNote = () => {
         setSelectedTag(null)
         setCurrentOpenedNote(null)
@@ -92,20 +93,6 @@ const CreateScreen = ({navigation, route}: any) => {
   return unsubscribe;
 }, [navigation]);
 
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
-      setKeyboardVisible(true);
-    });
-    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-      setKeyboardVisible(false);
-    });
-
-    // Cleanup listeners
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
 
   const handleSaveOpenedNote = async() => {
     try{
@@ -194,12 +181,16 @@ const CreateScreen = ({navigation, route}: any) => {
     }
   }
 
-  const handleNewBroadcast = async() => {
+  const handleInitiateBroadcast = () => {
+    setInitiateBroadcast(true)
+  }
+
+  const handleNewBroadcast = async(recipients: NotifyConfig[]) => {
     setLoading(true)
     try{
-      const data = await post(noteContent, broadcastSettings.telegramChannelId);
+      const data = await notify(recipients, noteContent);
       if(!data.success){
-        showMessage('Broadcast failed', true)
+        return showMessage('Broadcast failed', false)
       }
       await handleSaveNewNote();
       showMessage('Broadcast sent', true)
@@ -236,7 +227,7 @@ const CreateScreen = ({navigation, route}: any) => {
 
   const handleCreateQuotePost = () => {
     if(!process.env.NEW_POST_URL){
-      return Alert.alert('Pro feautre', 'Cannot use pro feature without api key')
+      return Alert.alert('Pro feautre', 'Cannot use pro-feature without API key')
     }
     setType('quote')
     setViewCreateOptions(false)
@@ -245,15 +236,15 @@ const CreateScreen = ({navigation, route}: any) => {
 
   const handleCreateBroadcast = () => {
     if(!process.env.NOTIFY_URL){
-      return Alert.alert('Pro feautre', 'Cannot use pro feature without api key')
+      return Alert.alert('Pro feautre', 'Cannot use pro-feature without API key')
     }
     setType('broadcast')
     setViewCreateOptions(false)
   }
 
   const handleCreateImage = () => {
-    if(!process.env.RUNPOD_API_KEY){
-      return Alert.alert('Pro feautre', 'Cannot use pro feature without api key')
+    if(!process.env.CREATE_IMAGE_URL){
+      return Alert.alert('Pro feautre', 'Cannot use pro-feature without API key')
     }
     setViewCreateOptions(false)
     setShouldHideTabBar(true)
@@ -297,7 +288,7 @@ const CreateScreen = ({navigation, route}: any) => {
             {`Characters: ${noteContent.length} /${type === 'broadcast'? 4096 : 300}`}
           </Text>
             <Button
-              onPress={type === 'broadcast'? handleNewBroadcast: handleNewQuote}
+              onPress={type === 'broadcast'? handleInitiateBroadcast: handleNewQuote}
               text={memoizedButtonText}
               backgroundColor={memoizedButtonColor}
               loading={loading}
@@ -335,12 +326,11 @@ const CreateScreen = ({navigation, route}: any) => {
             maxHeight={"100%"}
             minHeight={"100%"}
             fontSize={sizes.font.large}
-            paddingBottom={ isKeyboardVisible? 0:110}
+            paddingBottom={ isKeyboardVisible? TAB_HEIGHT : TAB_HEIGHT + 50}
           />
         </View>
       </ScrollView>
       )}
- 
       <DisplayModal 
         visible={selectingTag}
         onClose={()=>setSelectingTag(false)}
@@ -360,6 +350,15 @@ const CreateScreen = ({navigation, route}: any) => {
         title='Create'
         contentBackground={darkTheme? themes.dark.card:themes.light.card}
         textColor={darkTheme? themes.dark.text:themes.light.text}
+        />
+      <BroadcastModal 
+        visible={initiateBroadcast}
+        onClose={()=>setInitiateBroadcast(false)}
+        sendBroadcast={handleNewBroadcast}
+        title='Broadcast'
+        contentBackground={darkTheme? themes.dark.card:themes.light.card}
+        textColor={darkTheme? themes.dark.text:themes.light.text}
+        loading={loading}
         />
       <DialogueAlert
         visible={addingTag}
@@ -416,19 +415,10 @@ const styles = StyleSheet.create({
   titleInput: {
     padding: sizes.layout.small,
     marginBottom:sizes.layout.xSmall,
-fontWeight:'500',    maxWidth: "100%",
+    fontWeight:'500',    
+    maxWidth: "100%",
     maxHeight:'50%',
     fontSize: sizes.font.xLarge,
   },
-  viewModeButtonContainer:{
-    position:'absolute',
-    bottom:100,
-    right: 0,
-    alignItems:'center',
-    justifyContent:'center',
-  }
-
-
- 
 });
 export default CreateScreen;

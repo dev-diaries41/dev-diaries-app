@@ -225,7 +225,6 @@ const extractMetadata = async(fileContent: string, filename: string): Promise<{ 
 }
 
 
-
 const getNote = async(directory: string, filename: string) =>{
   try {
     const filePath = `${directory}/${filename}`;

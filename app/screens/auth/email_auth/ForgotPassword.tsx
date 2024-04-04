@@ -1,8 +1,8 @@
 import { StyleSheet, Text, TextInput, View, SafeAreaView } from 'react-native';
 import React, { useState } from 'react'
-import { themes, sizes } from '../../constants/layout';
-import { useSettingsContext } from '../../context/SettingsContext';
-import { Button, Spacer, TextButton } from '../../components';
+import { themes, sizes } from '../../../constants/layout';
+import { useSettingsContext } from '../../../context/SettingsContext';
+import { Button, Spacer, TextButton } from '../../../components';
 
 
 const ForgotPassword = ({navigation}: any) => {
@@ -30,16 +30,16 @@ const ForgotPassword = ({navigation}: any) => {
 
   return (
     <SafeAreaView
-      style={[styles.container, {backgroundColor:isDark? themes.dark.backgroundColor : themes.light.backgroundColor}]}      
+      style={[styles.container, {backgroundColor:isDark? themes.dark.background : themes.light.background}]}      
     >
-    <Text style={[styles.HeaderText, {color:isDark? themes.dark.textColor : themes.light.textColor}]}>Forgot Password</Text>
+    <Text style={[styles.HeaderText, {color:isDark? themes.dark.text : themes.light.text}]}>Forgot Password</Text>
       <Spacer/>
       <View style={styles.inputContainer}>
       <TextInput
         placeholder="Enter email"
         value={email}
         onChangeText={text => setEmail(text.trim())}
-        style={[styles.input, {color:isDark? themes.dark.textColor : themes.light.textColor}]}        
+        style={[styles.input, {color:isDark? themes.dark.text : themes.light.text}]}        
         placeholderTextColor= {themes.placeholder}
         autoCapitalize='none'
       />
@@ -47,18 +47,18 @@ const ForgotPassword = ({navigation}: any) => {
         text={'Reset Password'}
         width='100%'
         onPress={handleSubmit}
-        backgroundColor= {themes.light.primaryColor}
+        backgroundColor= {themes.light.primary}
         loading={loading}
        />
       </View>
 
      
       <View style={styles.ForgotContainer}>
-        <Text style={[styles.LoginText, {color:isDark? themes.dark.textColor : themes.light.textColor}]}>Already have an account?</Text>
+        <Text style={[styles.LoginText, {color:isDark? themes.dark.text : themes.light.text}]}>Already have an account?</Text>
         <TextButton
           onPress={handleLogin}
           buttonText={'Login'}
-          color={themes.light.primaryColor}
+          color={themes.light.primary}
           margin={0}
         />
     </View>
@@ -82,9 +82,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     padding:sizes.layout.small,
     borderRadius: sizes.layout.medSmall,
-    borderColor:themes.light.borderColor,
+    borderColor:themes.light.border,
     borderWidth:1,
-    color:themes.dark.textColor,
+    color:themes.dark.text,
     fontFamily:'monserrat-regular'  
 
   },
@@ -97,12 +97,12 @@ const styles = StyleSheet.create({
   LoginText: {
     marginRight: sizes.layout.xSmall,
     fontSize: sizes.font.medium,
-    color: themes.light.textColor,
+    color: themes.light.text,
     fontFamily:'monserrat-regular'  
   },
   HeaderText:{
     fontSize :sizes.font.xLarge,
-    color: themes.light.textColor,
+    color: themes.light.text,
     marginBottom:sizes.layout.medium,
     fontFamily: 'monserrat-bold'
   }

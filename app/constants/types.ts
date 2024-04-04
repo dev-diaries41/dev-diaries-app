@@ -47,6 +47,7 @@ export interface DisplayModalProps {
   title: string;
   contentBackground: string;
   textColor : string;
+  loading?: boolean;
 }
 
 export interface MnemonicModalProps extends DisplayModalProps { 
@@ -186,8 +187,8 @@ export interface Settings {
 }
 
 export interface NotifyConfig{
-    telegramChannelId?: string;
-    discordWebhookUrl?: string;
+    telegramChannelId?: string | number;
+    discordWebhookUrl?: URL | string;
 }
 
 export interface SettingsContextProps {
@@ -327,7 +328,7 @@ export interface UserContextProps {
   setSession: React.Dispatch<React.SetStateAction< Session | null>>; 
 }
 
-export interface LayoutContextProps {
+export interface TabLayoutContextProps {
   shouldHideTabBar: boolean;
   setShouldHideTabBar: React.Dispatch<React.SetStateAction<boolean>>; 
 }

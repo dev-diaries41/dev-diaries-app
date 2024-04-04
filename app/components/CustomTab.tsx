@@ -2,7 +2,7 @@ import { Keyboard, StyleSheet, View } from 'react-native'
 import React from 'react'
 import { sizes, themes } from '../constants/layout';
 import { Ionicons } from '@expo/vector-icons';
-import {useSettingsContext } from '../context/settingsContext';
+import {useSettingsContext } from '../context/SettingsContext';
 
 
 interface CustomTabProps {

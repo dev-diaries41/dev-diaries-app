@@ -21,7 +21,6 @@ export default function SettingsStackScreen({navigation}: any) {
   // }, [navigation] )
 
     return (
-      <NavigationContainer independent={true}theme={DarkTheme}>
       <SettingsStack.Navigator initialRouteName="Settings Home" screenOptions={{
         animationEnabled: true,
       }}
@@ -29,7 +28,6 @@ export default function SettingsStackScreen({navigation}: any) {
         <SettingsStack.Screen name="Settings Home" component={SettingsScreen} options={{ headerShown: false, }} />
         <SettingsStack.Screen name="Update Settings" component={UpdateSettingsScreen} options={{ headerShown: false }} />
       </SettingsStack.Navigator>
-      </NavigationContainer>
     );
   }
   

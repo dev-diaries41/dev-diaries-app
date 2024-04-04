@@ -3,20 +3,19 @@ import React, {useState, useCallback, useEffect} from 'react'
 import {NavigationContainer } from '@react-navigation/native';
 import * as SplashScreen from 'expo-splash-screen';
 import { themes, sizes } from './app/constants/layout';
-import { SettingsProvider } from './app/context/settingsContext';
+import { SettingsProvider } from './app/context/SettingsContext';
 import { PLACEHOLDER_TAGS, DEFAULT_SETTINGS } from './app/constants/defaultSettings';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ImageGenProvider } from './app/context/imageContext';
 import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from './app/screens/HomeScreen';
+import HomeScreen from './app/screens/home/HomeScreen';
 import UpdateSettingsScreen from './app/screens/settings/UpdateSettingsScreen';
-import { NotesProvider } from './app/context/noteContext';
+import { NotesProvider } from './app/context/NoteContext';
 import * as SystemUI from 'expo-system-ui';
 import { Note, Settings, Theme } from './app/constants/types';
 // import OnboardingScreen from './app/screens/onboarding/OnboardingScreen';
-import { UserProvider } from './app/context/userContext';
+import { UserProvider } from './app/context/UserContext';
 // import { supabase } from './app/lib/supabase/sb_config';
-import { Session } from '@supabase/supabase-js';
+// import { Session } from '@supabase/supabase-js';
 import { checkHasPassocde, checkHasSession, removeSession, storeSession } from './app/lib/auth';
 // import AuthScreens from './app/screens/auth/email_auth';
 import PasscodeScreens from './app/screens/auth/passcode_auth';
@@ -35,7 +34,7 @@ const App = () => {
     const [appIsReady, setAppIsReady] = useState(false);
     const [tags, setTags] = useState(PLACEHOLDER_TAGS);
     const [hasPasscode, setHasPasscode] = useState(false);
-    const [userSession, setUserSession] = useState<Session | null>(null)
+    const [userSession, setUserSession] = useState<any | null>(null)
     const [initialNotes, setInitialNotes] = useState<Note[]>([]);
 
     // useEffect(() => {
@@ -139,32 +138,24 @@ const App = () => {
     }
     return (
       <UserProvider userSession={userSession}>
-        <NotesProvider currentTags={tags} initialNotes={initialNotes}>
-          <ImageGenProvider>
-            <SettingsProvider settings={userSettings}>
-              <NavigationContainer onReady={onLayoutRootView} theme={{ colors: userSettings.theme === 'light' ? themes.light : themes.dark, dark: userSettings.theme === 'dark' }}>
+        <SettingsProvider settings={userSettings}>
+          <NotesProvider currentTags={tags} initialNotes={initialNotes}>
+            <NavigationContainer onReady={onLayoutRootView} theme={{ colors: userSettings.theme === 'light' ? themes.light : themes.dark, dark: userSettings.theme === 'dark' }}>
                 <Stack.Navigator
                   initialRouteName={hasPasscode && userSettings.enablePasscode? "Passcode Auth" : "Home"}
                   screenOptions={{
                     animationEnabled: true,
                   }}
                 >
+                  {/* <Stack.Screen name="Onboarding" component={OnboardingScreen} options={{headerShown: false, headerShadowVisible: false,}} /> */}
                   {/* <Stack.Screen name={'Auth'} component={AuthScreens} initialParams={{hasPasscode}} options={{ headerShown: false }} /> */}
                   <Stack.Screen name={'Passcode Auth'} component={PasscodeScreens} initialParams={{hasPasscode}} options={{ headerShown: false }} />
-                  <Stack.Screen name="Home" component={HomeScreen} initialParams={{hasPasscode}} options={{ headerShown: false }} />
-                  {/* <Stack.Screen name="Onboarding" component={OnboardingScreen} options={{
-                    headerShown: false,
-                    headerShadowVisible: false,
-                  }} /> */}
-                  <Stack.Screen name="Update Settings" component={UpdateSettingsScreen} options={{
-                    headerShown: true,
-                    headerShadowVisible: false,
-                  }} />
+                  <Stack.Screen name="Home" component={HomeScreen} initialParams={{hasPasscode, currentTags: tags, initialNotes}} options={{ headerShown: false }} />
+                  <Stack.Screen name="Update Settings" component={UpdateSettingsScreen} options={{headerShown: true,headerShadowVisible: false}} />
                 </Stack.Navigator>
               </NavigationContainer>
-            </SettingsProvider>
-          </ImageGenProvider>
-        </NotesProvider>
+              </NotesProvider>
+          </SettingsProvider>
       </UserProvider>
     );
     

@@ -2,12 +2,12 @@ import {StyleSheet, Text, View, ScrollView, AppState, Alert } from 'react-native
 import React, { useState} from 'react'
 import { Button, Spacer, InputField, TextButton } from '../../../components';
 import { themes, sizes } from '../../../constants/layout';
-import { useSettingsContext } from '../../../context/settingsContext';
+import { useSettingsContext } from '../../../context/SettingsContext';
 import { signInWithEmail } from '../../../lib/supabase/auth_sb';
 import { supabase } from '../../../lib/supabase/sb_config';
 import { fetchNotesInBatch } from '../../../lib/storage';
 import { sortTasksOnTop } from '../../../lib/sort';
-import { useNotesContext } from '../../../context/noteContext';
+import { useNotesContext } from '../../../context/NoteContext';
 
 const LoginScreen = ({navigation, route}: any) => {
     const {setMyNotes} = useNotesContext(); 

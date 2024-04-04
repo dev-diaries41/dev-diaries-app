@@ -1,7 +1,4 @@
 import { themes, sizes } from "../constants/layout";
-import React from 'react';
-import { View } from 'react-native';
-import { IconButton } from "../components";
 
 export const setTabLayout = (darkTheme: boolean, navigation:any) => 
 navigation.setOptions({

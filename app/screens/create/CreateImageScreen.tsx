@@ -2,40 +2,25 @@ import { StyleSheet, View, SafeAreaView, Dimensions, StatusBar, Keyboard, Text, 
 import React, {useState, useLayoutEffect, useEffect} from 'react'
 import { themes, sizes } from '../../constants/layout'
 import {AIImageStylesWrapper, Button, InputField, Spacer, Loader, IconButton } from '../../components';
-import { useImageGenContext } from '../../context/imageContext';
-import { generate } from '../../lib/generate';
-import { useSettingsContext } from '../../context/settingsContext';
-import { useLayoutContext } from '../../context/layoutContext';
+import { useImageGenContext } from '../../context/ImageContext';
+import { useSettingsContext } from '../../context/SettingsContext';
+import { useTabLayout } from '../../context/TabLayoutContext';
+import { generateImage } from '../../lib/create';
+import { useHideKeyboard } from '../../hooks/useHideKeyboard';
 
 const {height} = Dimensions.get('screen');
 
 const CreateImageScreen = ({navigation, route}: any) => {
     const {assets, setAssets} = useImageGenContext();
     const {theme, imageSettings} = useSettingsContext()
-    const {shouldHideTabBar, setShouldHideTabBar} = useLayoutContext();
+    const {shouldHideTabBar, setShouldHideTabBar} = useTabLayout();
     const [prompt, setPrompt] = useState('');
     const [promptError, setPromptError] = useState('');
     const [loading, setLoading] = useState(false);
     const darkTheme = theme === 'dark'
-    const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+    const {isKeyboardVisible} = useHideKeyboard();
     // console.log(route)
 
-
-    useEffect(() => {
-        const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
-          setKeyboardVisible(true);
-        });
-        const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-          setKeyboardVisible(false);
-        });
-    
-        // Cleanup listeners
-        return () => {
-          keyboardDidShowListener.remove();
-          keyboardDidHideListener.remove();
-        };
-      }, []);
-    
     useLayoutEffect(() => {
         navigation.setOptions({
         headerStyle: { backgroundColor: darkTheme ? themes.dark.background : themes.light.background },
@@ -77,16 +62,13 @@ const CreateImageScreen = ({navigation, route}: any) => {
         setLoading(true); 
         if (!prompt) {
             handlePromptError();
-            setLoading(false); 
-            return;
+            return setLoading(false); 
         }
-
         try {
-            const { data } = await generate(prompt, imageSettings);
+            const { data } = await generateImage(prompt, imageSettings);
             if (data && data.status === 'COMPLETED') {
                 setAssets([data.output.image_url]);
-                navigation.navigate('View Media', { prompt})
-                return;
+                return navigation.navigate('View Media', { prompt});
             } 
             alert(`Error: ${data.error}`);
         } catch (error) {
@@ -133,7 +115,7 @@ const CreateImageScreen = ({navigation, route}: any) => {
         </View>
         <Spacer/>
         <View style={styles.styleOptions}>
-            <Text style={[styles.label,{color: darkTheme? themes.dark.text: themes.light.text}]}>Pick a style (optional)</Text>   
+            <Text style={[styles.label,{color:themes.dark.text}]}>Pick a style (optional)</Text>   
             <AIImageStylesWrapper/>
         </View>
 

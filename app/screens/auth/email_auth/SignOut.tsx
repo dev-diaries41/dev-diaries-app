@@ -1,7 +1,7 @@
 import { Text, StyleSheet, SafeAreaView } from 'react-native';
 import React from 'react';
 import { themes, sizes } from '../../../constants/layout';
-import { useSettingsContext } from '../../../context/settingsContext';
+import { useSettingsContext } from '../../../context/SettingsContext';
 import { Button, Spacer } from '../../../components';
 import { signOut } from '../../../lib/supabase/auth_sb';
 

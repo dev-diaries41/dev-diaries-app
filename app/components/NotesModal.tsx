@@ -2,7 +2,7 @@ import React, {useRef, useLayoutEffect} from 'react';
 import { View, Text, Modal, PanResponder, Animated, StyleSheet, Dimensions } from 'react-native';
 import { themes, sizes } from '../constants/layout';
 import { DisplayModalProps, Note } from '../constants/types';
-import { useNotesContext } from '../context/noteContext';
+import { useNotesContext } from '../context/NoteContext';
 import TextWithIconButton from './TextWithIconButton';
 import IconButton from './IconButton';
 import { shareNote } from '../lib/storage';

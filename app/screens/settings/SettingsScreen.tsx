@@ -1,7 +1,7 @@
 import { View, SafeAreaView, ScrollView, StyleSheet, StatusBar, Appearance, useColorScheme } from 'react-native';
 import React, {useLayoutEffect } from 'react';
 import { themes, sizes } from '../../constants/layout';
-import { useSettingsContext } from '../../context/settingsContext';
+import { useSettingsContext } from '../../context/SettingsContext';
 import { SettingsCard } from '../../components';
 import { saveSettings } from '../../lib/storage';
 import { setTabLayout } from '../../lib/layout';

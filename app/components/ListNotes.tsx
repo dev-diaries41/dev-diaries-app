@@ -4,8 +4,8 @@ import { Note } from '../constants/types';
 import { AnimatedFlashList } from '@shopify/flash-list';
 import { sizes } from '../constants/layout';
 import NoteCard from './NoteCard';
-import { useSearchContext } from '../context/searchContext';
-import { useNotesContext } from '../context/noteContext';
+import { useSearchContext } from '../context/SearchContext';
+import { useNotesContext } from '../context/NoteContext';
 
 interface ListNotesProps {
   handleLoadMore: () => void;

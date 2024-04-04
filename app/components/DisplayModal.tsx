@@ -4,7 +4,7 @@ import { themes, sizes } from '../constants/layout';
 import { DisplayModalProps } from '../constants/types';
 import TagsWrapper from './TagsWrapper';
 import { Button } from './Buttons';
-import { useNotesContext } from '../context/noteContext';
+import { useNotesContext } from '../context/NoteContext';
 import IconButton from './IconButton';
 
 const {height} = Dimensions.get('screen')
@@ -76,7 +76,7 @@ const DisplayModal = ({
         </View>
 
         <View style={[styles.modalContent, {backgroundColor:contentBackground}]}>
-        <View style={styles.header}>
+          <View style={styles.header}>
             <Text style={[styles.title, {color:textColor, opacity:0.5}]} numberOfLines={2}>{title}</Text>
             <IconButton icon={"close-circle"} onPress={onClose} color={textColor} opacity={0.5}/>
           </View>          
@@ -84,7 +84,7 @@ const DisplayModal = ({
             <TagsWrapper darkTheme ={textColor === themes.dark.text} tags={tags} onClose={onClose} onTagSelect={onTagSelect} deleteTag={deleteTag}/>
           </ScrollView>
           <View style={styles.buttonContainer}>
-          <Button
+            <Button
               onPress={handleAddTag}
               text={'New Tag'}
               backgroundColor={textColor === themes.dark.text? themes.dark.primary:themes.light.primary}
@@ -94,11 +94,10 @@ const DisplayModal = ({
               icon={'add'}
               iconSize={24}
               height={40}
-              />
+            />
           </View>
-        
         </View>
-        </Animated.View>
+      </Animated.View>
     </Modal>
   );
 };

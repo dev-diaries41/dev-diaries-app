@@ -54,3 +54,6 @@ export  const sizes = {
     xxLarge: 24,
     }
 };
+
+export const TAB_HEIGHT = 70;
+

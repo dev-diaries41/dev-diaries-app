@@ -77,7 +77,6 @@ export const checkHasPassocde = async () => {
 export const checkHasSession = async () => {
   const session = await SecureStore.getItemAsync('session');
   return session;
-
 };
 
 export const storeSession = async (session: Session) => {

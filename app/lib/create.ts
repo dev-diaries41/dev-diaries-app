@@ -1,11 +1,12 @@
-import { Time } from "../constants/defaultSettings";
 import { themes } from "../constants/layout";
-import { DrawTextParams, CreateType } from "../constants/types";
+import { DrawTextParams, CreateType, NotifyConfig } from "../constants/types";
+import { Time, defaultImageSettings } from '../constants/defaultSettings';
 
-export const post = async(message: string, chatId?: string | number) => {
+
+export const notify = async(recipients: NotifyConfig[], message: string) => {
     const notificationsUrl = process.env.NOTIFY_URL || '';
     try{
-        const reqBody = {message, chatId}
+        const reqBody = {recipients, message}
         const response = await fetch(notificationsUrl, {
           method: "POST",
           headers: {
@@ -21,6 +22,30 @@ export const post = async(message: string, chatId?: string | number) => {
         console.error('Error in notify: ', error.response.data.error)
         return null;
     }
+}
+
+
+
+export const generateImage = async(prompt:string, imageSettings = defaultImageSettings) => {
+    const genImgUrl = process.env.CREATE_IMAGE_URL || '';
+    try{
+        const reqBody = {prompt, imageSettings}
+        const response = await fetch(genImgUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            'api-key':  process.env.EWAY_API_KEY || ''
+          },
+          body: JSON.stringify(reqBody),
+        });
+        const data = await response.json()
+        return data;
+
+    }catch(error: any){
+        console.error('Error in generate: ', error.response.data)
+        return null;
+    }
+  
 }
 
 export const quotePost = async(postOptions: DrawTextParams) => {
